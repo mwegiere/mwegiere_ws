@@ -8,3 +8,11 @@ rosrun image_view image_view image:=/camera/image_color _filename_format:="frame
 Siłowe zabijanie procesu:
 ps -a
 kill -9 17048
+
+konwerter euler<->quaternion
+http://quat.zachbennett.com/
+
+zmiana magicznej liczby w pliku
+ws_irp6/underlay/src/irp6_robot/irp6_bringup/launch/irp6-p-inside.launch
+w linii 122
+synchro_motor_position: [-15.9, -5.0, -8.527, 151.31, (432.25)+/-10, 791.0]
