@@ -1,0 +1,10 @@
+
+wiki do robotów irp6
+https://github.com/RCPRG-ros-pkg/irp6_robot/wiki
+
+Zapisywanie obrazu z kamery
+rosrun image_view image_view image:=/camera/image_color _filename_format:="frame%04i.png"
+
+Siłowe zabijanie procesu:
+ps -a
+kill -9 17048
