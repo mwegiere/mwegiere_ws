@@ -14,7 +14,9 @@ def ustawianie_narzedzia(z):
         print "Koniec ustawiania narzedzia"
 
 def obracanie_chwytaka():
-	irpos.move_rel_to_cartesian_pose(40.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(0.60876, 0.0, 0.0, -0.79335)))#-75 st.
+	for i in range(75):
+		#irpos.move_rel_to_cartesian_pose(40.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(0.60876, 0.0, 0.0, -0.79335)))#-75 st.
+		irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
 
 def wyswietl_aktualna_pozycje():
 	print "joint position"
@@ -34,8 +36,10 @@ if __name__ == '__main__':
         #1. ustawienie robota w pozycji pionowej
         pozycja_pionowa()
         #2. ustawienie narzedzia o dlugosci - odleglosc przeciecia osi nad chwytakiem do tasmociagu 
-	ustawianie_narzedzia(0.5)
+	#ustawianie_narzedzia(0.5)
 	#3. ustawienie robota pod katem -45 st.
 	#wyswietl_aktualna_pozycje()
-	obracanie_chwytaka()
+	#obracanie_chwytaka()
 	#wyswietl_aktualna_pozycje()
+
+	

@@ -43,49 +43,56 @@ class image_converter:
     
   def run(self):
     
-    pos_current = self.irpos.get_joint_position()
+    #pos_current = self.irpos.get_joint_position()
 
     # list of important poses
-    pos1 = [-0.10063291139240507, -1.5419428654532268, 0.019737556833721442, 1.1335183568246088, 3.658072916666667, -2.7381185214159984]
-    podzial = 10
-    pos2 = [-(0.1996774977436294 - (-0.10063291139240507))/podzial, -(-1.642122929252318 - (-1.5419428654532268))/podzial, -(-0.08032381762494378-(-1.1335183568246088))/podzial, -(1.0334922597384786-1.1335183568246088)/podzial, -(3.6579092920492924-3.658072916666667)/podzial, -(-2.7381185214159984-(-2.7381185214159984))/podzial]
+    #pos1 = [-0.10063291139240507, -1.5419428654532268, 0.019737556833721442, 1.1335183568246088, 3.658072916666667, -2.7381185214159984]
+    #podzial = 10
+    #pos2 = [-(0.1996774977436294 - (-0.10063291139240507))/podzial, -(-1.642122929252318 - (-1.5419428654532268))/podzial, -(-0.08032381762494378-(-1.1335183568246088))/podzial, -(1.0334922597384786-1.1335183568246088)/podzial, -(3.6579092920492924-3.658072916666667)/podzial, -(-2.7381185214159984-(-2.7381185214159984))/podzial]
     #pos2 = [0.1996774977436294, -1.642122929252318, -0.08032381762494378, 1.0334922597384786, 3.6579092920492924, -2.7381185214159984]
     #finalPose = (-(np.array(pos2) - np.array(pos1))/podzial)
     # maximum joint velocities
-    max_vel = [0.5, 0.5, 0.5, 0.5, 0.5, 0.25]
+    #max_vel = [0.5, 0.5, 0.5, 0.5, 0.5, 0.25]
      
-    diff = np.array(pos_current) - np.array(pos1)
-    print diff
-    diff = np.absolute(diff)
-    print diff
-    diff = np.divide(diff, max_vel)
-    print diff
-    first_time = max(np.amax(diff), 1)
-    print first_time
+    #diff = np.array(pos_current) - np.array(pos1)
+    #print diff
+    #diff = np.absolute(diff)
+    #print diff
+    #diff = np.divide(diff, max_vel)
+    #print diff
+    #first_time = max(np.amax(diff), 1)
+    #print first_time
 
     # move to initial position
-    self.irpos.move_to_joint_position(pos1, first_time)
+    #self.irpos.move_to_joint_position(pos1, first_time)
    
     # move_rel_to_joint_position
-    self.running = True    
-    for i in range(2):
-      self.irpos.move_rel_to_joint_position(pos2, 20)
-        
-      #client.update_configuration({"shutter_speed":x})
-      self.client.update_configuration({"gain":10})
-      self.image = None
-      while not self.image:
-        print self.image
-        time.sleep(5)
-      self.goodImages.append(self.image)
+    
+    #pozycja pionowa
+    self.irpos.move_to_joint_position([0.0, -1.57079632679, -0.0, -0.0, 4.71238898038, 1.57079632679], 10.0)
+    print "Pozycja startowa ustawiona
+    print "Start ustawiania narzedzia"
+    self.irpos.set_tool_geometry_params(Pose(Point(0.0, 0.0, z), Quaternion(0.0, 0.0, 0.0, 1.0)))
+    print "Koniec ustawiania narzedzia"
 
-      #client.update_configuration({"shutter_speed":x})
-      self.client.update_configuration({"gain":40})
-      self.image = None
-      while not self.image:
-        print self.image
-        time.sleep(5)
-      self.goodImages.append(self.image)
+    for i in range(75):
+       irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
+     
+       #client.update_configuration({"shutter_speed":x})
+       self.client.update_configuration({"gain":10})
+       self.image = None
+       while not self.image:
+          print self.image
+          time.sleep(5)
+       self.goodImages.append(self.image)
+
+       #client.update_configuration({"shutter_speed":x})
+       self.client.update_configuration({"gain":40})
+       self.image = None
+       while not self.image:
+          print self.image
+          time.sleep(5)
+       self.goodImages.append(self.image)
 
     # after the movement save all the photos
     print "Saving", len(self.goodImages), "images"
