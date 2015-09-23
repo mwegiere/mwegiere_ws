@@ -27,9 +27,9 @@ def czytanieMacierzyT01():
 	wyniki = 0
 	wynikQuaternion = []
 	wynikPrzesuniecie = []
-	f = open("wyniki2_kropki_biale.txt")
+	#f = open("wyniki2_kropki_biale.txt")
 
-	with open("wyniki2_kropki_biale.txt") as textfile1, open("wyniki2_kropki_czarne.txt") as textfile2:
+	with open("/home/mwegiere/ws_irp6/mwegiere_ws/src/serwo/diodRecogniotion/weryfikacja/wyniki2_czerwona.txt") as textfile1, open("/home/mwegiere/ws_irp6/mwegiere_ws/src/serwo/diodRecogniotion/weryfikacja/wyniki2_zielona.txt") as textfile2:
 	#with open("wyniki2_kropki_biale.txt") as textfile1, open("wyniki2_kropki_czarne.txt") as textfile2:
 		for x, y in izip(textfile1, textfile2):
 			homogVectorX[licznikWierszyX%16] = float(x)
@@ -46,6 +46,11 @@ def czytanieMacierzyT01():
 				homogMatrixY = np.matrix([[homogVectorY[0],homogVectorY[1],homogVectorY[2],homogVectorY[3]],[homogVectorY[4],homogVectorY[5],homogVectorY[6],homogVectorY[7]],[homogVectorY[8],homogVectorY[9],homogVectorY[10],homogVectorY[11]],[homogVectorY[12],homogVectorY[13],homogVectorY[14],homogVectorY[15]]])
 				Taa = np.linalg.inv(homogMatrixX)*homogMatrixY
 				odlegloscPozycji = np.sqrt(pow(Taa.item(0,3),2) + pow(Taa.item(1,3),2) + pow(Taa.item(2,3),2))
+				#print "a"
+				#print Taa.item(0,3)
+				#print Taa.item(1,3)
+				#print Taa.item(2,3)
+				
 				wynikPrzesuniecie.append(odlegloscPozycji)
 				quaternion = transformations.quaternion_from_matrix([[Taa.item(0,0),Taa.item(1,0),Taa.item(2,0)],[Taa.item(1,0),Taa.item(1,1),Taa.item(1,2)],[Taa.item(2,0),Taa.item(2,1),Taa.item(2,2)]])
 
@@ -61,6 +66,7 @@ def czytanieMacierzyT01():
 		mediana = 0
 		for item in wynikQuaternion:
 			mediana = mediana + float(item)
+			print item
 		mediana = mediana/licznikMacierzy
 		#print mediana
 
@@ -74,6 +80,7 @@ def czytanieMacierzyT01():
 		mediana = 0
 		for item in wynikPrzesuniecie:
 			mediana = mediana + float(item)
+                        print item
 		mediana = mediana/licznikMacierzy
 		#print mediana
 

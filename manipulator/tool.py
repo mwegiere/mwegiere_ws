@@ -14,7 +14,7 @@ def ustawianie_narzedzia(z):
         print "Koniec ustawiania narzedzia"
 
 def obracanie_chwytaka():
-	for i in range(75):
+	for i in range(70):
 		#irpos.move_rel_to_cartesian_pose(40.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(0.60876, 0.0, 0.0, -0.79335)))#-75 st.
 		irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
 

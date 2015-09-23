@@ -30,7 +30,6 @@ class image_converter:
     self.goodImages = []
     self.image = None
 
-    #rospy.init_node("dynamic_client")
     self.client = dynamic_reconfigure.client.Client("/camera/camera_nodelet", timeout=1, config_callback=self.dynamicReconfigureCallback)
     
   def interpret_key(delf, key, key_up, key_down, axis, pos, vel):
@@ -70,29 +69,33 @@ class image_converter:
     
     #pozycja pionowa
     self.irpos.move_to_joint_position([0.0, -1.57079632679, -0.0, -0.0, 4.71238898038, 1.57079632679], 10.0)
-    print "Pozycja startowa ustawiona
+    print "Pozycja startowa ustawiona"
     print "Start ustawiania narzedzia"
-    self.irpos.set_tool_geometry_params(Pose(Point(0.0, 0.0, z), Quaternion(0.0, 0.0, 0.0, 1.0)))
+    self.irpos.set_tool_geometry_params(Pose(Point(0.0, 0.0, 0.5), Quaternion(0.0, 0.0, 0.0, 1.0)))
     print "Koniec ustawiania narzedzia"
 
-    for i in range(75):
-       irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
-     
-       #client.update_configuration({"shutter_speed":x})
-       self.client.update_configuration({"gain":10})
+    for i in range(70):
+        
+       self.client.update_configuration({"shutter_speed":0.049})
        self.image = None
        while not self.image:
           print self.image
           time.sleep(5)
        self.goodImages.append(self.image)
+       print "jasne"
+       print len(self.goodImages)
 
-       #client.update_configuration({"shutter_speed":x})
-       self.client.update_configuration({"gain":40})
+       self.client.update_configuration({"shutter_speed":0.00001})
        self.image = None
        while not self.image:
           print self.image
           time.sleep(5)
        self.goodImages.append(self.image)
+       print "ciemne"
+       print len(self.goodImages)
+       
+       self.irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
+       print i
 
     # after the movement save all the photos
     print "Saving", len(self.goodImages), "images"
@@ -114,8 +117,7 @@ class image_converter:
       print e
 
   def dynamicReconfigureCallback(self,config):
-    #rospy.loginfo("Config set to {shutter_speed}".format(**config))
-    rospy.loginfo("Config set to {gain}".format(**config))
+    rospy.loginfo("Config set to {shutter_speed}".format(**config))
 
 def main(args):
   ic = image_converter()
