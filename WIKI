@@ -24,3 +24,6 @@ svn revert * -R
 kalibracja kamery
 rosrun camera_calibration cameracalibrator.py --size 5x6 --sqre 0.03 image:=/camera/image_raw camera:=/camera
 
+matlab
+/opt/MATLAB/R2013b/bin
+
