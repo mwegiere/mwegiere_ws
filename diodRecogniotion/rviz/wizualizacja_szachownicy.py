@@ -40,7 +40,7 @@ def calculateNewPoint():
 	
 def onInit():
 	rospy.Subscriber('/homog_matrix',Float32MultiArray, readHomogVector)
-	rospy.Subscriber('/found',Int, readFound)
+	#rospy.Subscriber('/found',Int, readFound)
 	topic = 'pawn_visualization'
 	global publisher
 	publisher = rospy.Publisher(topic, Marker,queue_size=10)
@@ -66,17 +66,17 @@ def pawnCreation():
 	pawn.scale.y = 0.4
 	pawn.scale.z = 0.01
 	
-	global found
-
-	if found == 1 :
-	pawn.scale.x = 0.2
-	pawn.scale.y = 0.4
-	pawn.scale.z = 0.01
 	
-	if found == 0 :
-	pawn.scale.x = 0.0
-	pawn.scale.y = 0.0
-	pawn.scale.z = 0.00	
+
+	if homogMatrix[0][0] != 0.0 :
+		pawn.scale.x = 0.2
+		pawn.scale.y = 0.4
+		pawn.scale.z = 0.01
+	
+	else :
+		pawn.scale.x = 0.0
+		pawn.scale.y = 0.0
+		pawn.scale.z = 0.0
 	
 	publisher.publish(pawn)
 	rospy.sleep(0.01)

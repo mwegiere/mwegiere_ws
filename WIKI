@@ -20,10 +20,13 @@ synchro_motor_position: [-15.9, -5.0, -8.527, 151.31, (432.25)+/-10, 791.0]
 przywrócenie do aktualnej wersji na serwerze
 svn revert * -R
 
-
 kalibracja kamery
-rosrun camera_calibration cameracalibrator.py --size 5x6 --sqre 0.03 image:=/camera/image_raw camera:=/camera
+rosrun camera_calibration cameracalibrator.py --size 5x6 --square 0.03 image:=/camera/image_raw camera:=/camera
+
+rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.108 image:=/my_camera/image camera:=/my_camera
 
 matlab
 /opt/MATLAB/R2013b/bin
+
+https://192.168.18.220/twiki/bin/view/Main
 

@@ -20,7 +20,20 @@ import roslib;roslib.load_manifest(PACKAGE)
 import rospy
 import dynamic_reconfigure.client
 
+#pakiety do subskrybcji tf
+import roslib
+roslib.load_manifest('serwo')
+import rospy
+import math
+import tf
+from tf import transformations
+import numpy
+import geometry_msgs.msg
+
 class image_converter:
+
+  def fromTranslationRotation(self, translation, rotation):
+    return numpy.dot(transformations.translation_matrix(translation), transformations.quaternion_matrix(rotation))
 
   def __init__(self): 
     cv2.namedWindow("Image window", 1)
@@ -49,7 +62,20 @@ class image_converter:
     self.irpos.set_tool_geometry_params(Pose(Point(0.0, 0.0, 0.5), Quaternion(0.0, 0.0, 0.0, 1.0)))
     print "Koniec ustawiania narzedzia"
 
+    listener = tf.TransformListener()
+    rate = rospy.Rate(1.0)
+    tfCamWorld = open("/home/mwegiere/ws_irp6/mwegiere_ws/src/serwo/tfCamWorld", "wb")
+
     for i in range(70):
+
+
+       #zapisanie aktualnego przeksztalcenia z /p_c_optical_frame do /world
+       rate.sleep()
+       (trans,rot) = listener.lookupTransform('/p_c_optical_frame', '/world', rospy.Time(0))
+       camToWorld = self.fromTranslationRotation(trans, rot)
+       for j in range(4):
+          for k in range(4):
+             tfCamWorld.write(str(camToWorld[j,k])+"\n")
         
        self.client.update_configuration({"shutter_speed":0.4})
        self.client.update_configuration({"gain":20.0})
@@ -83,6 +109,7 @@ class image_converter:
       cv2.imwrite(fname, self.bridge.imgmsg_to_cv2(self.goodImages[i], "bgr8"))
 
     print "I'm done!"
+    tfCamWorld.close()
 
   def makePhotoCallback(self, data):  
     try:  

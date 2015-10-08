@@ -11,7 +11,7 @@ import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
-
+import os.path
 import time
 
 #pakiety sluzace do dynamicznej rekonfiguracji parametrow kamery
@@ -27,9 +27,7 @@ class image_converter:
     self.bridge = CvBridge()
     self.image_sub = rospy.Subscriber("/camera/image_color", Image, self.makePhotoCallback) 
     self.irpos = IRPOS("IRpOS", "Irp6p", 6, "irp6p_manager")
-    self.goodImages = []
     self.image = None
-
     self.client = dynamic_reconfigure.client.Client("/camera/camera_nodelet", timeout=1, config_callback=self.dynamicReconfigureCallback)
     
   def interpret_key(delf, key, key_up, key_down, axis, pos, vel):
@@ -40,49 +38,35 @@ class image_converter:
       
     return pos
     
-  def run(self):
-    
+  def run(self):    
     #pozycja pionowa
     self.irpos.move_to_joint_position([0.0, -1.57079632679, -0.0, -0.0, 4.71238898038, 1.57079632679], 10.0)
-    print "Pozycja startowa ustawiona"
-    print "Start ustawiania narzedzia"
+    #ustawianie narzedzia
     self.irpos.set_tool_geometry_params(Pose(Point(0.0, 0.0, 0.5), Quaternion(0.0, 0.0, 0.0, 1.0)))
-    print "Koniec ustawiania narzedzia"
 
     for i in range(70):
-        
-       self.client.update_configuration({"shutter_speed":0.4})
-       self.client.update_configuration({"gain":20.0})
-       self.image = None
-       while not self.image:
-          print self.image
-          time.sleep(5)
-       self.goodImages.append(self.image)
-       print "jasne"
-       print len(self.goodImages)
-
-       self.client.update_configuration({"shutter_speed":0.001})
-       self.client.update_configuration({"gain":0.0})
-       self.image = None
-       while not self.image:
-          print self.image
-          time.sleep(5)
-       self.goodImages.append(self.image)
-       print "ciemne"
-       print len(self.goodImages)
-       
        self.irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
-       print i
-       
-
-    # after the movement save all the photos
-    print "Saving", len(self.goodImages), "images"
-    for i in range(len(self.goodImages)):
-      fname = str(self.goodImages[i].header.stamp.secs) + "_" + format(self.goodImages[i].header.stamp.nsecs, '09') + ".png"
-      print "Saving", fname
-      cv2.imwrite(fname, self.bridge.imgmsg_to_cv2(self.goodImages[i], "bgr8"))
-
-    print "I'm done!"
+       for j in range(6):
+          for k in range(3):
+             print i
+             gain = j*5
+	     if k == 0:
+		shutter_speed = 0.001
+	     if k == 1:
+		shutter_speed = 0.005
+	     if k == 2:
+		shutter_speed = 0.01
+	     if k == 3:
+		shutter_speed = 0.5
+	     
+             self.client.update_configuration({"gain":gain})
+             self.client.update_configuration({"shutter_speed":shutter_speed})
+    
+       	     self.image = None
+             while not self.image:
+                time.sleep(1)
+             name = str(j) +'_'+ str(k) +'_'+ str(i) + ".png"
+             cv2.imwrite(name, self.bridge.imgmsg_to_cv2(self.image, "bgr8"))
 
   def makePhotoCallback(self, data):  
     try:  
@@ -96,7 +80,6 @@ class image_converter:
 
   def dynamicReconfigureCallback(self,config):
     rospy.loginfo("Config set to {shutter_speed}".format(**config))
-    rospy.loginfo("Config set to {gain}".format(**config))
 
 def main(args):
   ic = image_converter()

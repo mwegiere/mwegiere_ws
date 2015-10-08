@@ -17,7 +17,6 @@ def czytanieMacierzyT01():
 	licznikWierszyY = 0
 	licznikWierszy = 0
 	licznikMacierzy = 0
-	#wyniki = 0
 	wynikQuaternion = []
 	wynikPrzesuniecie = []
 
@@ -28,17 +27,15 @@ def czytanieMacierzyT01():
 		plik2 = "wyniki2.txt"
 
 	if szachownica:
-		#plik1 = "wyniki2_czerwona.txt"
-		#plik2 = "wyniki2_zielona.txt"
-		plik1 = "1.txt"
-		plik2 = "2.txt"
+		plik1 = "wyniki2_czerwona.txt"
+		plik2 = "wyniki2_zielona.txt"
 
 	if diody:
 		diody_obroty = open("../../wyniki/diody_obroty", "wb")
 		diody_przesuniecie = open("../../wyniki/diody_przesuniecie", "wb")
-	 	#diody_przesuniecie_x = open("../../wyniki/diody_przesuniecie_x", "wb")
-		#diody_przesuniecie_y = open("../../wyniki/diody_przesuniecie_y", "wb")
-		#diody_przesuniecie_z = open("../../wyniki/diody_przesuniecie_z", "wb")
+	 	diody_przesuniecie_x = open("../../wyniki/diody_przesuniecie_x", "wb")
+		diody_przesuniecie_y = open("../../wyniki/diody_przesuniecie_y", "wb")
+		diody_przesuniecie_z = open("../../wyniki/diody_przesuniecie_z", "wb")
 
 	if szachownica:
 		szachownica_obroty = open("../../wyniki/szachownica_obroty", "wb")
@@ -61,15 +58,14 @@ def czytanieMacierzyT01():
 				homogVectorY[15] = 1.0
 				homogMatrixY = np.matrix([[homogVectorY[0],homogVectorY[1],homogVectorY[2],homogVectorY[3]],[homogVectorY[4],homogVectorY[5],homogVectorY[6],homogVectorY[7]],[homogVectorY[8],homogVectorY[9],homogVectorY[10],homogVectorY[11]],[homogVectorY[12],homogVectorY[13],homogVectorY[14],homogVectorY[15]]])
 				
-				#Taa = homogMatrixX*np.linalg.inv(homogMatrixY)
+				Taa = homogMatrixX*np.linalg.inv(homogMatrixY)
 				#Taa = np.linalg.inv(homogMatrixX)*homogMatrixY
-				Taa = homogMatrixY
 				odlegloscPozycji = np.sqrt(pow(Taa.item(0,3),2) + pow(Taa.item(1,3),2) + pow(Taa.item(2,3),2))
 				if diody:
 					diody_przesuniecie.write(str(odlegloscPozycji)+"\n")
-					#diody_przesuniecie_x.write(str(Taa.item(0,3))+"\n")
-					#diody_przesuniecie_y.write(str(Taa.item(1,3))+"\n")
-					#diody_przesuniecie_z.write(str(Taa.item(2,3))+"\n")
+					diody_przesuniecie_x.write(str(Taa.item(0,3))+"\n")
+					diody_przesuniecie_y.write(str(Taa.item(1,3))+"\n")
+					diody_przesuniecie_z.write(str(Taa.item(2,3))+"\n")
 
 				if szachownica:
 					szachownica_przesuniecie.write(str(odlegloscPozycji)+"\n")
@@ -119,9 +115,9 @@ def czytanieMacierzyT01():
 		if diody:
 			diody_obroty.close()
 			diody_przesuniecie.close()
-	 		#diody_przesuniecie_x.close()
-			#diody_przesuniecie_y.close()
-			#diody_przesuniecie_z.close()
+	 		diody_przesuniecie_x.close()
+			diody_przesuniecie_y.close()
+			diody_przesuniecie_z.close()
 
 		if szachownica:
 			szachownica_obroty.close()
