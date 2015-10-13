@@ -58,7 +58,7 @@ def czytanieMacierzyT01():
 				homogVectorY[15] = 1.0
 				homogMatrixY = np.matrix([[homogVectorY[0],homogVectorY[1],homogVectorY[2],homogVectorY[3]],[homogVectorY[4],homogVectorY[5],homogVectorY[6],homogVectorY[7]],[homogVectorY[8],homogVectorY[9],homogVectorY[10],homogVectorY[11]],[homogVectorY[12],homogVectorY[13],homogVectorY[14],homogVectorY[15]]])
 				
-				Taa = homogMatrixX*np.linalg.inv(homogMatrixY)
+				Taa = homogMatrixY*np.linalg.inv(homogMatrixX)
 				#Taa = np.linalg.inv(homogMatrixX)*homogMatrixY
 				odlegloscPozycji = np.sqrt(pow(Taa.item(0,3),2) + pow(Taa.item(1,3),2) + pow(Taa.item(2,3),2))
 				if diody:
