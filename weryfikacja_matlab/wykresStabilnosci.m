@@ -115,6 +115,25 @@ legend('kąt w osi x','kąt w osi y', 'kąt w osi z');
 %print(destFile2,'-dpng')
 hold off
 
+if(strcmp(nazwaWzorca,'diody'))
+    przedzial = 25:65;
+end
+if(strcmp(nazwaWzorca,'szachownica'))
+   przedzial = 15:50;
+end   
+S_diody_przesuniecie_x = std(diody_przesuniecie_x(1,przedzial))
+M_diody_przesuniecie_x = mean(diody_przesuniecie_x(1,przedzial))
+S_diody_przesuniecie_y = std(diody_przesuniecie_y(1,przedzial))
+M_diody_przesuniecie_y = mean(diody_przesuniecie_y(1,przedzial))
+S_diody_przesuniecie_z = std(diody_przesuniecie_z(1,przedzial))
+M_diody_przesuniecie_z = mean(diody_przesuniecie_z(1,przedzial))
+S_diody_kat_a = std(diody_kat_a(1,przedzial))
+M_diody_kat_a = mean(diody_kat_a(1,przedzial))
+S_diody_kat_b = std(diody_kat_b(1,przedzial))
+M_diody_kat_b = mean(diody_kat_b(1,przedzial))
+S_diody_kat_c = std(diody_kat_c(1,przedzial))
+M_diody_kat_c = mean(diody_kat_c(1,przedzial))
 
 end
+
 
