@@ -17,6 +17,8 @@ import numpy as np
 
 import time
 
+from serwo import matrixOperations
+
 #pakiety sluzace do dynamicznej rekonfiguracji parametrow kamery
 PACKAGE = 'pointgrey_camera_driver'
 import roslib;roslib.load_manifest(PACKAGE)
