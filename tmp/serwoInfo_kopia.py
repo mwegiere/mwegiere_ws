@@ -21,9 +21,11 @@ import matrixOperations
 class serwoInfo:
 
   def __init__(self): 
-    self.matrix = []
+
     rospy.init_node('listener', anonymous=True)
     self.listener = tf.TransformListener()
+
+    self.matrix = []
     self.found = 0
     self.out_time_sec_pocz = 0
     self.out_time_nsec_pocz = 0
@@ -66,7 +68,6 @@ class serwoInfo:
         self.tmp_sec_kon = self.out_time_sec_kon
         self.tmp_nsec_kon = self.out_time_sec_kon
 
-	#pobranie pozycji ... w ukladzie ... z tf-a
         self.listener.waitForTransform('/p_c_optical_frame', '/pl_base', rospy.Time(0), rospy.Duration(10))
         #T_bC pozycja /wordl (B) w ukladzie /p_c_optical_frame (C)
     	(trans,rot) = self.listener.lookupTransform('/p_c_optical_frame', '/world', rospy.Time(0))
@@ -90,7 +91,7 @@ class serwoInfo:
           #dekompozycja regulatora
           print self.T_gC_koniec
 
-          #liczenie T_gC przez regulatpr
+          #liczenie T_gC przez regulator
           #self.przesuniecie = self.T_gC_koniec[3,2] * 0.01
 
 	  #przeksztalcenie T_gC do T_cB
