@@ -32,9 +32,9 @@ class serwoInfo:
     self.reg = 0
     self.newPos = 0
     self.newVel = 0
-    self.gain = 0.4
+    self.gain = 10/500
 
-    self.frequency = 500
+    self.frequency = 50
 
     #definicjie macierzy
     self.T_gC = np.empty([4, 4])
@@ -57,7 +57,9 @@ class serwoInfo:
     self.irpos.stop_force_controller()
 
   def run(self):
+
     pub = rospy.Publisher('uchyb', Float32, queue_size=10)
+
     rospy.Subscriber("seeByIRP6HomogMatrix", Float32, self.callback) 
     self.irpos.set_tool_physical_params(10.8, Vector3(0.004, 0.0, 0.156))
 
@@ -71,14 +73,16 @@ class serwoInfo:
 	#REGULATOR	
 	self.reg = self.y_gC * self.gain
 
+	
+
 	self.newVel = self.reg
 	
 	print self.newVel
     	self.irpos.start_force_controller(Inertia(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0)), ReciprocalDamping(Vector3(0.0025, 0.0025, 0.0025), Vector3(0.0, 0.0, 0.0)), Wrench(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0)), Twist(Vector3(0.0, -self.newVel, 0.0), Vector3(0.0, 0.0, 0.0)))
         #print self.newVel
+	pub.publish(self.y_gC)
 
         rate.sleep()
-        pub.publish(self.y_gC)
     self.irpos.stop_force_controller()   
 def main():
   si = serwoInfo()

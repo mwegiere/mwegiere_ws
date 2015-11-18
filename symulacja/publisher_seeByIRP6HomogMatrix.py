@@ -9,7 +9,7 @@ def talker():
     rospy.init_node('seeByIRP6HomogMatrix', anonymous=True)
 
     #w rzeczywistosci obiekt poruszasza sie z taka czestotliwoscia
-    rate = rospy.Rate(40) 
+    rate = rospy.Rate(1) 
     while not rospy.is_shutdown():
         y = math.sin(rospy.get_time()/5)
         pub.publish(y)

@@ -18,11 +18,11 @@ def obracanie_chwytaka():
 		#irpos.move_rel_to_cartesian_pose(40.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(0.60876, 0.0, 0.0, -0.79335)))#-75 st.
 		irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
 
-def predkosc():
+def predkosc(y):
 	irpos.set_tool_physical_params(10.8, Vector3(0.004, 0.0, 0.156))
-	irpos.start_force_controller(Inertia(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0)), ReciprocalDamping(Vector3(0.0025, 0.0025, 0.0025), Vector3(0.0, 0.0, 0.0)), Wrench(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0)), Twist(Vector3(0.0, 0.5, 0.0), Vector3(0.0, 0.0, 0.0)))
+	irpos.start_force_controller(Inertia(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0)), ReciprocalDamping(Vector3(0.0025, 0.0025, 0.0025), Vector3(0.0, 0.0, 0.0)), Wrench(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 0.0)), Twist(Vector3(0.0, y, 0.0), Vector3(0.0, 0.0, 0.0)))
 
-	time.sleep(0.0002)
+	time.sleep(2)
 	irpos.stop_force_controller()
 
 def wyswietl_aktualna_pozycje():
@@ -41,7 +41,8 @@ if __name__ == '__main__':
 	irpos = IRPOS("maciek", "Irp6p", 6, "irp6p_manager")
         #0.ustawienie magicznej liczby
         #1. ustawienie robota w pozycji pionowej
-        pozycja_pionowa()
+        #pozycja_pionowa()
+	predkosc(-0.05)
 	#for i in range(1000):
         #	predkosc()
         #2. ustawienie narzedzia o dlugosci - odleglosc przeciecia osi nad chwytakiem do tasmociagu 
