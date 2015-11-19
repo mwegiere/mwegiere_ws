@@ -42,6 +42,7 @@ class image_converter:
     key = -1
     while key != 27:
       pos_current = self.irpos.get_joint_position()
+      pos_current_cartesian = self.irpos.get_cartesian_pose()
       pos_current = list(pos_current)
       old_pos = list(pos_current)
       key = cv2.waitKey(10)
@@ -56,6 +57,9 @@ class image_converter:
       
       if chr(key) == 'p':
         print pos_current
+
+      if chr(key) == 'k':
+        print pos_current_cartesian
 
       if pos_current != old_pos:
         self.irpos.move_to_joint_position(pos_current, 1)
