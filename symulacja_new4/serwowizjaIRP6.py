@@ -75,6 +75,7 @@ class serwoInfo:
       if self.error[i] > self.minError[i] or self.error[i] < -self.minError[i]:
         self.newVel[i] = self.error[i] * self.p[i]
       else:
+        print 'error to small'
         self.newVel[i] = 0
 
   def calculateNewCartesianPose(self):
@@ -84,11 +85,11 @@ class serwoInfo:
     self.new_pos_cartesian[2] = current_pos_cartesian.position.z + self.newVel[2]*(1/self.frequency)
 
   def calculateNewAcceleration(self):
-    for i in range(6):
+    for i in range(3):
       self.newAcceleration[i] = self.newVel[i]*self.frequency
 
   def checkVelocityLimits(self):
-    for i in range(6):
+    for i in range(3):
       if self.newVel[i] > self.maxVel[i]:
         self.newVel[i] = self.maxVel[i]
         print 'Przekroczono limit predkosci w osi ' + str(i) + " : " + str(self.newVel[i])
@@ -97,7 +98,7 @@ class serwoInfo:
         print 'Przekroczono limit predkosci w osi ' + str(i) + " : " + str(self.newVel[i]) 
      
   def checkAccelerationLimits(self):
-    for i in range(6):
+    for i in range(3):
       if not (self.newAcceleration[i] > -self.maxAcceleration[i] and self.newAcceleration[i] < self.maxAcceleration[i]):
         print 'Przekroczono limit przyspieszenia w osi ' + str(i) + ': ' + str(self.newAcceleration[i])
         self.newVel[0] = 0
@@ -113,13 +114,13 @@ class serwoInfo:
   
   def setNewVelocity(self):
     self.checkVelocityLimits()
-    self.checkAccelerationLimits()
+    #self.checkAccelerationLimits()
     self.checkCartesianLimits()   
 
   def calculateAndSetNewValues(self):
     if self.found == 1:
       self.calculateNewVel()
-      self.calculateNewAcceleration()
+      #self.calculateNewAcceleration()
       self.calculateNewCartesianPose()
       self.setNewVelocity()
       print 'a'

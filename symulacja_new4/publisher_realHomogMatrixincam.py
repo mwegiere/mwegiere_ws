@@ -19,18 +19,18 @@ def talker():
     a = np.empty([4, 4])
     b = np.empty([4, 4])
     rate = rospy.Rate(500) 
+    listener.waitForTransform('/p_c_optical_frame', '/world', rospy.Time(0), rospy.Duration(10))
 
-    while not rospy.is_shutdown():
-        listener.waitForTransform('/p_c_optical_frame', '/world', rospy.Time(0), rospy.Duration(10))
+    while not rospy.is_shutdown():       
         #T_bC pozycja /wordl (B) w ukladzie /p_c_optical_frame (C)
     	(trans,rot) = listener.lookupTransform('/p_c_optical_frame', '/world', rospy.Time(0))
 	T_bC = matrixOperations.euler_matrix_from_quaternion(rot, trans)
 
         y = math.sin(rospy.get_time()/5)
-        y = 2.2 + y/4
-        x = math.sin(rospy.get_time()/5)
-        x = 1 + y/2
-        vector_gB = [1,0,0,x,0,1,0,y,0,0,1,0.6,0,0,0,1]
+        y = 2.3 + y/5
+        #x = math.sin(rospy.get_time()/5)
+        #x = 1 + y/2
+        vector_gB = [1,0,0,0.88,0,1,0,y,0,0,1,0.6,0,0,0,1]
 	T_gB = matrixOperations.translation_from_vector(vector_gB)
         a = T_gB
 
