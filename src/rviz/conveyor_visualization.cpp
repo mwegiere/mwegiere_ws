@@ -72,7 +72,9 @@ void MarkerVis::vectorToTransform(cv::vector<float> v, int found)
     {
       tf::Vector3 translation_gC = tf::Vector3(v[3], v[7], v[11]);
       tf::Matrix3x3 rotation_gC = tf::Matrix3x3(v[0], v[1], v[2], v[4], v[5], v[6], v[8], v[9], v[10]);
+      std::cout<<"trans:"<<std::endl;
       printVector(translation_gC);
+      std::cout<<"rot:"<<std::endl;
       printMatrix3x3(rotation_gC);
       T_gC = tf::Transform(rotation_gC, translation_gC);
     }
@@ -81,6 +83,7 @@ void MarkerVis::vectorToTransform(cv::vector<float> v, int found)
       tf::Vector3 translation_gC = tf::Vector3(0, 0, 0);
       tf::Matrix3x3 rotation_gC = tf::Matrix3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       T_gC = tf::Transform(rotation_gC, translation_gC);
+      std::cout<<"not found"<<std::endl;
     }
     return;
   }
@@ -114,7 +117,7 @@ void MarkerVis::setMarker()
   {
     tf::Transform T_cB = T_bC.inverse();
     tf::Transform T_gB = T_cB * T_gC;
-    printTransform(T_gB);
+    //printTransform(T_gB);
     tf::Quaternion q = T_gB.getRotation();
 
     marker.header.frame_id = "/world";

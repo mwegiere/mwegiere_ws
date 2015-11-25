@@ -8,6 +8,7 @@
 #include <tf/transform_listener.h>
 
 //Define a marker to be published in a topic and visualize in Rviz
+//Used to visualize grid plate
 class MarkerVis
 {
 public:
@@ -23,8 +24,7 @@ public:
     void listener();
    
 private:
-    //in case of conveyor matrix is a position of conveyor in /world coordinate frame
-    //in case of another object matrix is a position of object in /camera coordinate frame
+    //position of object in /camera coordinate frame
     std::vector<float> vector_;
     //cv::Mat_<float> matrix_;
     //tell if an object was found by camera or not
