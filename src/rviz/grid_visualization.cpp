@@ -17,7 +17,7 @@ public:
     void chatterCallback(const serwo::SerwoInfo& msg);
     //create a marker
     void setMarker();
-    void vectorToTransform(std::vector<float>, int);
+    void vectorToTransform(std::vector<double>, int);
     void printTransform(tf::Transform);
     void printVector(tf::Vector3 V);
     void printMatrix3x3(tf::Matrix3x3);
@@ -25,8 +25,7 @@ public:
    
 private:
     //position of object in /camera coordinate frame
-    std::vector<float> vector_;
-    //cv::Mat_<float> matrix_;
+    std::vector<double> vector_;
     //tell if an object was found by camera or not
     int found_;
     //subscribe info. about object
@@ -66,13 +65,15 @@ void MarkerVis::printMatrix3x3(tf::Matrix3x3 M)
 }
 
 //Change 16-elements vector to 4x4 matrix
-void MarkerVis::vectorToTransform(cv::vector<float> v, int found)
+void MarkerVis::vectorToTransform(cv::vector<double> v, int found)
   {
     if (found == 1)
     {
       tf::Vector3 translation_gC = tf::Vector3(v[3], v[7], v[11]);
       tf::Matrix3x3 rotation_gC = tf::Matrix3x3(v[0], v[1], v[2], v[4], v[5], v[6], v[8], v[9], v[10]);
+      std::cout<<"trans:"<<std::endl;
       printVector(translation_gC);
+      std::cout<<"rot:"<<std::endl;
       printMatrix3x3(rotation_gC);
       T_gC = tf::Transform(rotation_gC, translation_gC);
     }
@@ -81,6 +82,7 @@ void MarkerVis::vectorToTransform(cv::vector<float> v, int found)
       tf::Vector3 translation_gC = tf::Vector3(0, 0, 0);
       tf::Matrix3x3 rotation_gC = tf::Matrix3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       T_gC = tf::Transform(rotation_gC, translation_gC);
+      std::cout<<"not found"<<std::endl;
     }
     return;
   }
@@ -113,15 +115,14 @@ void MarkerVis::chatterCallback(const serwo::SerwoInfo& msg)
 void MarkerVis::setMarker()
   {
     tf::Transform T_cB = T_bC.inverse();
-    //tf::Transform::mult(T_cB, T_gC);
     tf::Transform T_gB = T_cB * T_gC;
-    printTransform(T_gB);
+    //printTransform(T_gB);
     tf::Quaternion q = T_gB.getRotation();
 
     marker.header.frame_id = "/world";
     marker.header.stamp = ros::Time();
-    marker.ns = "my_namespace";
-    marker.id = 0;
+    //marker.ns = "my_namespace";
+    //marker.id = 0;
     marker.type = visualization_msgs::Marker::CUBE;
     marker.action = visualization_msgs::Marker::ADD;
     marker.pose.position.x = T_gB.getOrigin()[0];
@@ -144,12 +145,12 @@ void MarkerVis::setMarker()
 MarkerVis::MarkerVis(ros::NodeHandle &nh)
   {
     nh_ = nh;
-    marker_info_sub = nh_.subscribe("realHomogMatrix", 1, &MarkerVis::chatterCallback, this);    
-    marker_vis_pub = nh_.advertise<visualization_msgs::Marker>( "visualization_marker", 1 );
+    marker_info_sub = nh_.subscribe("object_seen_by_camera", 1, &MarkerVis::chatterCallback, this);
+    marker_vis_pub = nh_.advertise<visualization_msgs::Marker>( "object_seen_by_camera_in_rviz", 1 );
   }
 
 int main(int argc, char **argv) {  
-  ros::init(argc, argv,"conveyor_visualization");
+  ros::init(argc, argv,"object_seen_by_camera_in_rviz");
   ros::NodeHandle nh;
   MarkerVis marker(nh);
   while (ros::ok())

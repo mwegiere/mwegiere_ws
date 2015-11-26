@@ -9,7 +9,7 @@ class ImageProcessing {
  public:
   ImageProcessing(ros::NodeHandle &nh);
   //-----------------------------------
-  //input of SolvePnP
+  //++++input of SolvePnP++++
   //generating camera image points
   std::vector<cv::Point2f> Generate2DPoints();
   //generating real object points
@@ -18,19 +18,25 @@ class ImageProcessing {
   std::vector<cv::Point2f> imagePoints;
   //real object points
   std::vector<cv::Point3f> objectPoints;
+  //distort coefficients
   cv::Mat distCoeffs;
+  //camera matrix
   cv::Mat cameraMatrix;
   //-----------------------------------
-  //output of SolvePnP
+  //++++output of SolvePnP++++
+  //rotation vector
   cv::Mat_<double> rvec;
+  //translation vector
   cv::Mat_<double> tvec;
   //-----------------------------------
 
+  //1/0 depends on diod grid grid was found / not found
   int found;
 
   //-----------------------------------
-  //publish HomogMatrix
+  //mesage to be published (grid position in camera frame)
   serwo::SerwoInfo msg;
+  //publisher (grid position in camera frame)
   ros::Publisher grid_info_pub;
 
  private:
@@ -45,11 +51,9 @@ class ImageProcessing {
 };
 void ImageProcessing::callback(const sensor_msgs::ImageConstPtr& img) {
   sourceImage = cv_bridge::toCvShare(img, "bgr8")->image.clone();
-  std::cout << sourceImage.size() << std::endl;
 }
 
 std::vector<cv::Point2f> ImageProcessing::Generate2DPoints() {
-  // Retrieve image from the stream.
   cv::Mat image = sourceImage;
 
   double sumaB = 0;
@@ -143,7 +147,7 @@ ImageProcessing::ImageProcessing(ros::NodeHandle &nh) {
 
   grid_info_pub = nh_.advertise<serwo::SerwoInfo>("object_seen_by_camera", 1);
 
-  //imagePoints = Generate2DPoints();
+  //3D model points are constant
   objectPoints = Generate3DPoints();
 
   distCoeffs = cv::Mat(5, 1, cv::DataType<double>::type);
@@ -188,23 +192,27 @@ int main(int argc, char **argv) {
   while (ros::ok()) {
     //updating image points
     imageProcessing.imagePoints = imageProcessing.Generate2DPoints();
+    //solvePnP
     cv::solvePnP(imageProcessing.objectPoints, imageProcessing.imagePoints,
                  imageProcessing.cameraMatrix, imageProcessing.distCoeffs,
                  imageProcessing.rvec, imageProcessing.tvec);
+    //change rvec to matrix
     cv::Mat_<double> rotationMatrix;
     cv::Rodrigues(imageProcessing.rvec, rotationMatrix);
-
+    //final matrix (grid position in camera frame)
     cv::Mat pattern_pose =
         (cv::Mat_<double>(4, 4) << rotationMatrix(0, 0), rotationMatrix(0, 1), rotationMatrix(
             0, 2), imageProcessing.tvec(0), rotationMatrix(1, 0), rotationMatrix(
             1, 1), rotationMatrix(1, 2), imageProcessing.tvec(1), rotationMatrix(
             2, 0), rotationMatrix(2, 1), rotationMatrix(2, 2), imageProcessing
             .tvec(2), 0, 0, 0, 1);
-    printf("[ %f %f %f %f\n %f %f %f %f\n %f %f %f %f\n %f %f %f %f]\n ", rotationMatrix(0,0), rotationMatrix(0,1), rotationMatrix(0,2), imageProcessing.tvec(0),
+
+    /*printf("[ %f %f %f %f\n %f %f %f %f\n %f %f %f %f\n %f %f %f %f]\n ", rotationMatrix(0,0), rotationMatrix(0,1), rotationMatrix(0,2), imageProcessing.tvec(0),
      rotationMatrix(1,0), rotationMatrix(1,1), rotationMatrix(1,2), imageProcessing.tvec(1),
      rotationMatrix(2,0), rotationMatrix(2,1), rotationMatrix(2,2), imageProcessing.tvec(2),
-     0.0, 0.0, 0.0, 1.0);
-    std::vector<float> pattern_pose_vector;
+     0.0, 0.0, 0.0, 1.0);*/
+    //push pattern_pose to vector
+    std::vector<double> pattern_pose_vector;
     pattern_pose_vector.push_back(rotationMatrix(0, 0));
     pattern_pose_vector.push_back(rotationMatrix(0, 1));
     pattern_pose_vector.push_back(rotationMatrix(0, 2));
@@ -221,12 +229,14 @@ int main(int argc, char **argv) {
     pattern_pose_vector.push_back(0.0);
     pattern_pose_vector.push_back(0.0);
     pattern_pose_vector.push_back(1.0);
+    //create message
     imageProcessing.msg.matrix = pattern_pose_vector;
     imageProcessing.msg.found = imageProcessing.found;
     imageProcessing.msg.out_time_nsec_pocz = 0;
     imageProcessing.msg.out_time_sec_pocz = 0;
     imageProcessing.msg.out_time_nsec_kon = 0;
     imageProcessing.msg.out_time_sec_kon = 0;
+    //publish message
     imageProcessing.grid_info_pub.publish(imageProcessing.msg);
 
     ros::spinOnce();

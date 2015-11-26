@@ -17,7 +17,7 @@ public:
     void chatterCallback(const sensor_msgs::JointState& msg);
     //create a marker
     void setMarker();
-    void vectorToTransform(std::vector<float>, int);
+    void vectorToTransform(std::vector<double>, int);
     void printTransform(tf::Transform);
     void printVector(tf::Vector3 V);
     void printMatrix3x3(tf::Matrix3x3);
@@ -25,11 +25,10 @@ public:
    
 private:
     //position of object in /camera coordinate frame
-    std::vector<float> vector_;
-    //cv::Mat_<float> matrix_;
+    std::vector<double> vector_;
     //tell if an object was found by camera or not
     int found_;
-    float y_;
+    double y_;
     //subscribe info. about object
     ros::Publisher grid_info_pub;
     //subscribe info. from TF about camera pos in /world
@@ -65,7 +64,7 @@ void MarkerVis::printMatrix3x3(tf::Matrix3x3 M)
 }
 
 //Change 16-elements vector to 4x4 matrix
-void MarkerVis::vectorToTransform(cv::vector<float> v, int found)
+void MarkerVis::vectorToTransform(cv::vector<double> v, int found)
   {
     if (found == 1)
     {
@@ -105,7 +104,7 @@ void MarkerVis::listener()
 void MarkerVis::chatterCallback(const sensor_msgs::JointState& msg)
   {
     y_ = msg.position;
-    vector_ = std::vector<float>[1,0,0,0.88, 0,1,0,y_, 0,0,1,0.6, 0,0,0,1];
+    vector_ = std::vector<double>[1,0,0,0.88, 0,1,0,y_, 0,0,1,0.6, 0,0,0,1];
   }
 
 void MarkerVis::setMarker()
