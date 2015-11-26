@@ -118,6 +118,63 @@ std::vector<cv::Point2f> ImageProcessing::Generate2DPoints() {
     }
   }
 
+  int licznik = 0;
+  float suma_i = 0.0;
+  float suma_j = 0.0;
+  int i = 0;
+  int j = 0;
+  if (wsp_maxB.y - 3 > 0 && wsp_maxB.y + 3 < rows && wsp_maxB.x - 3 > 0 && wsp_maxB.x + 3 < cols){
+      for (i = wsp_maxB.y - 3; i < wsp_maxB.y + 3; ++i) {
+          ptr = image.ptr(i);
+          for (j = wsp_maxB.x - 3; j < wsp_maxB.x + 3; ++j) {
+              if (ptr[3*j] > 0 || ptr[3*j+1] > 0 || ptr[3*j+2] > 0){
+                  licznik += ptr[3*j];
+                  suma_i += i*ptr[3*j];
+                  suma_j += j*ptr[3*j];
+              }
+          }
+      }
+      wsp_maxB.y = (int)(suma_i/licznik);
+      wsp_maxB.x = (int)(suma_j/licznik);
+  }
+
+  licznik = 0;
+  suma_i = 0.0;
+  suma_j = 0.0;
+  if (wsp_maxG.y - 3 > 0 && wsp_maxG.y + 3 < rows && wsp_maxG.x - 3 > 0 && wsp_maxG.x + 3 < cols){
+      for (i = wsp_maxG.y - 3; i < wsp_maxG.y + 3; ++i) {
+          ptr = image.ptr(i);
+          for (j = wsp_maxG.x - 3; j < wsp_maxG.x + 3; ++j) {
+              if (ptr[3*j] > 0 && ptr[3*j+1] > 0 && ptr[3*j+2] > 0){
+                  licznik += ptr[3*j+1];
+                  suma_i += i*ptr[3*j+1];
+                  suma_j += j*ptr[3*j+1];
+              }
+          }
+      }
+      wsp_maxG.y = (int)suma_i/licznik;
+      wsp_maxG.x = (int)suma_j/licznik;
+  }
+
+
+  licznik = 0;
+  suma_i = 0.0;
+  suma_j = 0.0;
+  if (wsp_maxR.y - 3 > 0 && wsp_maxR.y + 3 < rows && wsp_maxR.x - 3 > 0 && wsp_maxR.x + 3 < cols){
+      for (i = wsp_maxR.y - 3; i < wsp_maxR.y + 3; ++i) {
+          ptr = image.ptr(i);
+          for (j = wsp_maxR.x - 3; j < wsp_maxR.x + 3; ++j) {
+              if (ptr[3*j] > 0 && ptr[3*j+1] > 0 && ptr[3*j+2] > 0){
+                  licznik += ptr[3*j+1];
+                  suma_i += i*ptr[3*j+1];
+                  suma_j += j*ptr[3*j+1];
+              }
+          }
+      }
+      wsp_maxR.y = (int)suma_i/licznik;
+      wsp_maxR.x = (int)suma_j/licznik;
+  }
+
   int prog = 50;
   std::vector<cv::Point2f> gridPoints;
   cv::Point2f wsp_zero;
@@ -151,19 +208,19 @@ ImageProcessing::ImageProcessing(ros::NodeHandle &nh) {
   objectPoints = Generate3DPoints();
 
   distCoeffs = cv::Mat(5, 1, cv::DataType<double>::type);
-  distCoeffs.at<double>(0) = -0.432862;
-  distCoeffs.at<double>(1) = 0.206828;
-  distCoeffs.at<double>(2) = -0.005944;
-  distCoeffs.at<double>(3) = 0.003594;
+  distCoeffs.at<double>(0) = -0.413271;
+  distCoeffs.at<double>(1) = 0.172960;
+  distCoeffs.at<double>(2) = -0.004729;
+  distCoeffs.at<double>(3) = -0.000895;
   distCoeffs.at<double>(4) = 0.0;
 
   cameraMatrix = cv::Mat(3, 3, cv::DataType<double>::type);
-  cameraMatrix.at<double>(0, 0) = 1097.309750;
+  cameraMatrix.at<double>(0, 0) = 1080.054285;
   cameraMatrix.at<double>(0, 1) = 0.0;
-  cameraMatrix.at<double>(0, 2) = 631.666708;
+  cameraMatrix.at<double>(0, 2) = 655.287407;
   cameraMatrix.at<double>(1, 0) = 0.0;
-  cameraMatrix.at<double>(1, 1) = 1091.041004;
-  cameraMatrix.at<double>(1, 2) = 518.507823;
+  cameraMatrix.at<double>(1, 1) = 1072.245647;
+  cameraMatrix.at<double>(1, 2) = 524.778361;
   cameraMatrix.at<double>(2, 0) = 0.0;
   cameraMatrix.at<double>(2, 1) = 0.0;
   cameraMatrix.at<double>(2, 2) = 1.0;
