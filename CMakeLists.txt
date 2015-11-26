@@ -170,10 +170,23 @@ include_directories(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_executable(talker src/talker.cpp)
-target_link_libraries(talker ${catkin_LIBRARIES})
-add_dependencies(talker serwo_generate_messages_cpp)
-
-add_executable(listener src/listener.cpp)
+add_executable(listener src/image_processing/listener.cpp)
 target_link_libraries(listener ${catkin_LIBRARIES})
 add_dependencies(listener serwo_generate_messages_cpp)
+
+add_executable(grid_visualization src/rviz/grid_visualization.cpp)
+target_link_libraries(grid_visualization ${catkin_LIBRARIES})
+add_dependencies(grid_visualization serwo_generate_messages_cpp)
+
+#add_executable(conveyor_visualization src/rviz/conveyor_visualization.cpp)
+#target_link_libraries(conveyor_visualization ${catkin_LIBRARIES})
+#add_dependencies(conveyor_visualization serwo_generate_messages_cpp)
+
+
+
+
+
+
+
+
+

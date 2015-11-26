@@ -1,7 +1,7 @@
 #----------------------
 # Serwo info
 #----------------------
-float32[] matrix
+float64[] matrix
 int32 found
 int32 out_time_nsec_pocz
 int32 out_time_sec_pocz
