@@ -61,19 +61,21 @@ public:
     void TestLimits();
     void regulatroDecomposition();
 
-    void moveToJointPosition();
+    void moveToJointPosition(std::vector<double>, double);
 
    
 private:
 
 };
-void Irp6Control::moveToJointPosition(){
+void Irp6Control::moveToJointPosition(std::vector<double> pos, double time_from_start){
 
     actionlib::SimpleActionClient< control_msgs::FollowJointTrajectoryAction > trajectory_action_("/irp6p_arm/spline_trajectory_action_joint", true);
-    std::cout<<trajectory_action_.isServerConnected()<<std::endl;
+
     trajectory_action_.waitForServer();
+    //std::cout<<trajectory_action_.isServerConnected()<<std::endl;
 
     control_msgs::FollowJointTrajectoryGoal jointGoal;
+
     jointGoal.trajectory.joint_names.push_back("joint1");
     jointGoal.trajectory.joint_names.push_back("joint2");
     jointGoal.trajectory.joint_names.push_back("joint3");
@@ -81,33 +83,30 @@ void Irp6Control::moveToJointPosition(){
     jointGoal.trajectory.joint_names.push_back("joint5");
     jointGoal.trajectory.joint_names.push_back("joint6");
 
+    //number of waypoints
     jointGoal.trajectory.points.resize(1);
 
     int ind = 0;
     jointGoal.trajectory.points[ind].positions.resize(6);
-    jointGoal.trajectory.points[ind].positions[0] = 0.1;
-    jointGoal.trajectory.points[ind].positions[1] = 0.0;
-    jointGoal.trajectory.points[ind].positions[2] = 0.0;
-    jointGoal.trajectory.points[ind].positions[3] = 0.0;
-    jointGoal.trajectory.points[ind].positions[4] = 0.0;
-    jointGoal.trajectory.points[ind].positions[5] = 0.0;
 
-    jointGoal.trajectory.points[ind].time_from_start = ros::Duration(10.0);
+    jointGoal.trajectory.points[ind].positions[0] = pos[1];
+    jointGoal.trajectory.points[ind].positions[1] = pos[2];
+    jointGoal.trajectory.points[ind].positions[2] = pos[3];
+    jointGoal.trajectory.points[ind].positions[3] = pos[4];
+    jointGoal.trajectory.points[ind].positions[4] = pos[5];
+    jointGoal.trajectory.points[ind].positions[5] = pos[6];
+
+    jointGoal.trajectory.points[ind].time_from_start = ros::Duration(time_from_start);
 
     jointGoal.trajectory.header.stamp = ros::Time::now() + ros::Duration(0.2);
+
     trajectory_action_.sendGoal(jointGoal);
+
     trajectory_action_.waitForResult();
-    std::cout<<trajectory_action_.getState().toString();
+
+    //std::cout<<trajectory_action_.getState().toString();
     ROS_INFO("Sent Goal");
 }
-
-//jointGoal = FollowJointTrajectoryGoal()
-//jointGoal.trajectory.joint_names = self.robot_joint_names
-//jointGoal.trajectory.points.append(JointTrajectoryPoint(joint_positions, self.get_zeros_vector(), [], [], rospy.Duration(time_from_start)))
-//jointGoal.trajectory.header.stamp = rospy.get_rostime() + rospy.Duration(0.2)
-
-//self.joint_client.send_goal(jointGoal)
-//self.joint_client.wait_for_result()
 
 Irp6Control::Irp6Control(ros::NodeHandle &nh)
   {
@@ -203,10 +202,20 @@ Irp6Control::Irp6Control(ros::NodeHandle &nh)
 
 
 int main(int argc, char **argv) {  
-  ros::init(argc, argv,"object_seen_by_camera_in_rviz");
+  ros::init(argc, argv,"serwovision_control");
   ros::NodeHandle nh;
   Irp6Control control(nh);
-  control.moveToJointPosition();
+
+  std::vector<double> pos;
+  pos.push_back(0.0);
+  pos.push_back(-1.57079632679);
+  pos.push_back(0.0);
+  pos.push_back(0.0);
+  pos.push_back(4.71238898038);
+  pos.push_back(1.57079632679);
+
+  control.moveToJointPosition(pos,10.0);
+  ros::spinOnce();
   /*while (ros::ok())
   {
     control.moveToJointPosition();
