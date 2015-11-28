@@ -178,13 +178,13 @@ add_executable(grid_visualization src/rviz/grid_visualization.cpp)
 target_link_libraries(grid_visualization ${catkin_LIBRARIES})
 add_dependencies(grid_visualization serwo_generate_messages_cpp)
 
-add_executable(irp6_control src/irp6_control/irp6_control.cpp)
-target_link_libraries(irp6_control ${catkin_LIBRARIES})
-add_dependencies(irp6_control serwo_generate_messages_cpp)
+#add_executable(irp6_control src/irp6_control/irp6_control.cpp)
+#target_link_libraries(irp6_control ${catkin_LIBRARIES})
+#add_dependencies(irp6_control serwo_generate_messages_cpp)
 
-#add_executable(conveyor_visualization src/rviz/conveyor_visualization.cpp)
-#target_link_libraries(conveyor_visualization ${catkin_LIBRARIES})
-#add_dependencies(conveyor_visualization serwo_generate_messages_cpp)
+add_executable(conveyor_visualization src/rviz/conveyor_visualization.cpp)
+target_link_libraries(conveyor_visualization ${catkin_LIBRARIES})
+add_dependencies(conveyor_visualization serwo_generate_messages_cpp)
 
 
 

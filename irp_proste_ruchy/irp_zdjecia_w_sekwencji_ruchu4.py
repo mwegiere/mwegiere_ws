@@ -17,7 +17,7 @@ import numpy as np
 
 import time
 
-from serwo import matrixOperations
+import matrixOperations
 
 #pakiety sluzace do dynamicznej rekonfiguracji parametrow kamery
 PACKAGE = 'pointgrey_camera_driver'
@@ -58,6 +58,9 @@ class image_converter:
     rate = rospy.Rate(1.0)
     T_CW_file = open("/home/mwegiere/ws_irp6/mwegiere_ws/src/serwo/T_CW", "wb")
 
+    for i in range(35):
+       	self.irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
+
     for i in range(70):
        print "aa"
        #zapisanie aktualnego przeksztalcenia z /p_c_optical_frame do /world
@@ -91,7 +94,7 @@ class image_converter:
        self.goodImages.append(self.image)
        print len(self.goodImages)
        
-       self.irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
+       #self.irpos.move_rel_to_cartesian_pose(1.0,Pose(Point(0.0, 0.0, 0.0), Quaternion(-0.00872654, 0.0, 0.0, 0.99996192)))
        
 
     # after the movement save all the photos

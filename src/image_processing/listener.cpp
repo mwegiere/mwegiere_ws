@@ -118,82 +118,96 @@ std::vector<cv::Point2f> ImageProcessing::Generate2DPoints() {
     }
   }
 
-  int licznik = 0;
-  float suma_i = 0.0;
-  float suma_j = 0.0;
+  double licznik = 0.0;
+  double suma_i = 0.0;
+  double suma_j = 0.0;
   int i = 0;
   int j = 0;
-  if (wsp_maxB.y - 3 > 0 && wsp_maxB.y + 3 < rows && wsp_maxB.x - 3 > 0 && wsp_maxB.x + 3 < cols){
-      for (i = wsp_maxB.y - 3; i < wsp_maxB.y + 3; ++i) {
+
+  if (wsp_maxB.y - 6 > 0 && wsp_maxB.y + 6 < rows && wsp_maxB.x - 6 > 0 && wsp_maxB.x + 6 < cols){
+      for (i = wsp_maxB.y - 2; i < wsp_maxB.y + 2; ++i) {
           ptr = image.ptr(i);
-          for (j = wsp_maxB.x - 3; j < wsp_maxB.x + 3; ++j) {
-              if (ptr[3*j] > 0 || ptr[3*j+1] > 0 || ptr[3*j+2] > 0){
-                  licznik += ptr[3*j];
-                  suma_i += i*ptr[3*j];
-                  suma_j += j*ptr[3*j];
+          for (j = wsp_maxB.x - 2; j < wsp_maxB.x + 2; ++j) {
+              if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
+                  licznik += (ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
+                  suma_i += i*((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]));
+                  suma_j += j*(ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
               }
           }
       }
-      wsp_maxB.y = (int)(suma_i/licznik);
-      wsp_maxB.x = (int)(suma_j/licznik);
+      wsp_maxB.y = (float)(suma_i/licznik);
+      wsp_maxB.x = (float)(suma_j/licznik);
   }
 
-  licznik = 0;
+  licznik = 0.0;
   suma_i = 0.0;
   suma_j = 0.0;
-  if (wsp_maxG.y - 3 > 0 && wsp_maxG.y + 3 < rows && wsp_maxG.x - 3 > 0 && wsp_maxG.x + 3 < cols){
-      for (i = wsp_maxG.y - 3; i < wsp_maxG.y + 3; ++i) {
+  if (wsp_maxG.y - 6 > 0 && wsp_maxG.y + 6 < rows && wsp_maxG.x - 6 > 0 && wsp_maxG.x + 6 < cols){
+      for (i = wsp_maxG.y - 6; i < wsp_maxG.y + 6; ++i) {
           ptr = image.ptr(i);
-          for (j = wsp_maxG.x - 3; j < wsp_maxG.x + 3; ++j) {
-              if (ptr[3*j] > 0 && ptr[3*j+1] > 0 && ptr[3*j+2] > 0){
-                  licznik += ptr[3*j+1];
-                  suma_i += i*ptr[3*j+1];
-                  suma_j += j*ptr[3*j+1];
+          for (j = wsp_maxG.x - 6; j < wsp_maxG.x + 6; ++j) {
+              if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
+                  licznik += (ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
+                  suma_i += i*((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]));
+                  suma_j += j*(ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
               }
           }
       }
-      wsp_maxG.y = (int)suma_i/licznik;
-      wsp_maxG.x = (int)suma_j/licznik;
+      wsp_maxG.y = (float)(suma_i/licznik);
+      wsp_maxG.x = (float)(suma_j/licznik);
   }
 
-
-  licznik = 0;
+  licznik = 0.0;
   suma_i = 0.0;
   suma_j = 0.0;
-  if (wsp_maxR.y - 3 > 0 && wsp_maxR.y + 3 < rows && wsp_maxR.x - 3 > 0 && wsp_maxR.x + 3 < cols){
-      for (i = wsp_maxR.y - 3; i < wsp_maxR.y + 3; ++i) {
+  if (wsp_maxW.y - 6 > 0 && wsp_maxW.y + 6 < rows && wsp_maxW.x - 6 > 0 && wsp_maxW.x + 6 < cols){
+      for (i = wsp_maxW.y - 6; i < wsp_maxW.y + 6; ++i) {
           ptr = image.ptr(i);
-          for (j = wsp_maxR.x - 3; j < wsp_maxR.x + 3; ++j) {
-              if (ptr[3*j] > 0 && ptr[3*j+1] > 0 && ptr[3*j+2] > 0){
-                  licznik += ptr[3*j+1];
-                  suma_i += i*ptr[3*j+1];
-                  suma_j += j*ptr[3*j+1];
+          for (j = wsp_maxW.x - 6; j < wsp_maxW.x + 6; ++j) {
+              if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
+                  licznik += (ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
+                  suma_i += i*((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]));
+                  suma_j += j*(ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
               }
           }
       }
-      wsp_maxR.y = (int)suma_i/licznik;
-      wsp_maxR.x = (int)suma_j/licznik;
+      wsp_maxW.y = (float)(suma_i/licznik);
+      wsp_maxW.x = (float)(suma_j/licznik);
   }
 
-  int prog = 50;
+  licznik = 0.0;
+  suma_i = 0.0;
+  suma_j = 0.0;
+  if (wsp_maxR.y - 6 > 10 && wsp_maxR.y + 6 < rows && wsp_maxR.x - 6 > 0 && wsp_maxR.x + 6 < cols){
+      for (i = wsp_maxR.y - 6; i < wsp_maxR.y + 6; ++i) {
+          ptr = image.ptr(i);
+          for (j = wsp_maxR.x - 6; j < wsp_maxR.x + 6; ++j) {
+              if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
+                  licznik += (ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
+                  suma_i += i*((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]));
+                  suma_j += j*(ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
+              }
+          }
+      }
+      wsp_maxR.y = (float)(suma_i/licznik);
+      wsp_maxR.x = (float)(suma_j/licznik);
+  }
+
   std::vector<cv::Point2f> gridPoints;
-  cv::Point2f wsp_zero;
-  wsp_zero.x = 0.0;
-  wsp_zero.y = 0.0;
-
-  if (maxB > prog && maxG > prog && maxR > prog && maxW > prog) {
-    found = 1;
-    /*gridPoints.push_back(wsp_maxB);
-     gridPoints.push_back(wsp_maxG);
-     gridPoints.push_back(wsp_maxR);
-     gridPoints.push_back(wsp_maxW);*/
-  } else {
-    found = 0;
-  }
+  found = 1;
   gridPoints.push_back(wsp_maxB);
   gridPoints.push_back(wsp_maxG);
   gridPoints.push_back(wsp_maxR);
   gridPoints.push_back(wsp_maxW);
+  //std::cout<<"B"<<std::endl;
+  std::cout<<wsp_maxB<<std::endl;
+  //std::cout<<"G"<<std::endl;
+  //std::cout<<wsp_maxG<<std::endl;
+  //std::cout<<"W"<<std::endl;
+  //std::cout<<wsp_maxW<<std::endl;
+  //std::cout<<"R"<<std::endl;
+  //std::cout<<wsp_maxR<<std::endl;
+  //std::cout<<""<<std::endl;
   return gridPoints;
 }
 
@@ -286,6 +300,12 @@ int main(int argc, char **argv) {
     pattern_pose_vector.push_back(0.0);
     pattern_pose_vector.push_back(0.0);
     pattern_pose_vector.push_back(1.0);
+
+    //std::fstream plik;
+    //plik.open( "/home/mwegiere/DC.txt", std::ios::app | std::ios::out);
+    //for (int i=0; i<16; ++i)
+    //std::cout<<pattern_pose_vector[3]<<std::endl;
+    //plik.close();
     //create message
     imageProcessing.msg.matrix = pattern_pose_vector;
     imageProcessing.msg.found = imageProcessing.found;
