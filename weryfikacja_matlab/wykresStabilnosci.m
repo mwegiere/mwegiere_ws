@@ -85,7 +85,7 @@ s2 = ') w globalnym, nieruchomym układzie współrzędnych, podczas obserwacji 
 s = strcat(s,s2);
 title(s,'FontSize',15);
 xlabel('Kąt odchylenia osi optycznej kamery od osi prostopadłej do wzorca (stopnie)','FontSize',15); % x-axis label
-ylabel('odległość układu wzorca od układu bazowego (metry)','FontSize',15); % y-axis label
+ylabel('Odległość układu wzorca od układu bazowego (metry)','FontSize',15); % y-axis label
 plot (skala, diody_przesuniecie_x, '.b');
 plot (skala, diody_przesuniecie_y, '.c');
 plot (skala, diody_przesuniecie_z, '.m');
@@ -107,7 +107,7 @@ s2 = ') w globalnym, nieruchomym układzie współrzędnych, podczas obserwacji 
 s = strcat(s,s2);
 title(s,'FontSize',15);
 xlabel('Kąt odchylenia osi optycznej kamery od osi prostopadłej do wzorca (stopnie)','FontSize',15); % x-axis label
-ylabel('kąt pomiędzy układem wzorca a układem bazowym (radiany)','FontSize',15); % y-axis label
+ylabel('Kąt pomiędzy układem wzorca a układem bazowym (radiany)','FontSize',15); % y-axis label
 plot (skala, diody_kat_a, '*b');
 plot (skala, diody_kat_b, '*c');
 plot (skala, diody_kat_c, '*m');

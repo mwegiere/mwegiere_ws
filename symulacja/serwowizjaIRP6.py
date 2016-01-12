@@ -156,7 +156,7 @@ class serwoInfo:
     self.irpos.set_tool_physical_params(10.8, Vector3(0.004, 0.0, 0.156)) #ustawienia do sterowania predkoscia
 
     pub = rospy.Publisher('uchyb', Float32, queue_size=10) #publikacja uchybu do celu rysowania wykresy
-    rospy.Subscriber("realHomogMatrix", SerwoInfo, self.callback) #subskrybcja T_gC_vector
+    rospy.Subscriber("object_seen_by_camera", SerwoInfo, self.callback) #subskrybcja T_gC_vector
  
     while not rospy.is_shutdown():
         if not not self.T_gC_vector:

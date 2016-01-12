@@ -47,56 +47,8 @@ class ImageProcessing {
   ros::Subscriber imageSubscriber;
   //callback function used for subscribe image from topic
   void callback(const sensor_msgs::ImageConstPtr& img);
-  //int modelMask(std::vector<std::vector<int>> ,cv::Point2f, int, cv::Mat);
 
 };
-/*
- std::vector<std::vector<int>> mask - maska modelu, macierz 2x2 z modelem, który chcemy dopasować do obrazu
- cv::Point2f wsp_max - punkt wstępnie uznany za środek diody, od niego zaczniemy poszukiwania
- int range - rozmiar macierzy otaczającej piksel uznany za środkowy
- cv::Mat image - przetarzany obraz
-
-
-int ImageProcessing::modelMask(std::vector<std::vector<int>> mask,cv::Point2f& wsp_max, int range, cv::Mat image){
-    cv::Point2f& wsp_max_new,
-    //sprawdzanie czy badana macierz otaczająca piksel uznany za środek diody nie wykracza poza macierz całego obrazu
-    bool in_range = false;
-    int rows = image.size().height;
-    int cols = image.size().width;
-    if (wsp_maxB.y - range > 0 && wsp_maxB.y + range < rows && wsp_maxB.x - range > 0 && wsp_maxB.x + range < cols)
-        in_range = true;
-    else
-        return 0;
-
-    double match_wsp = 0.0; //wspolczynnik dopasowania, ktory chcemy maksymalizować
-    double tmp = 0.0;
-    int b = 0;
-    int g = 0;
-    int r = 0;
-
-    uchar * ptr;
-    for (int i = wsp_maxB.y - range; i < wsp_maxB.y + range - mask.size(); ++i) {
-      for (int j = wsp_maxB.x - range; j < wsp_maxB.x + range -mask.size(); ++j)
-          for (int k = 0; k < range; ++k)
-              for (int l = 0; l < range; ++l){
-                ptr = image.ptr(i+k);
-                b = ptr[3 * j+l];
-                g = ptr[3 * j+l + 1];
-                r = ptr[3 * j+l + 2];
-                tmp += mask(k,l)*(b+g+r);
-              }
-      if (tmp > match_wsp){
-          match_wsp = tmp;
-
-      }
-
-
-
-
-    return 1;
-}
-*/
-
 void ImageProcessing::callback(const sensor_msgs::ImageConstPtr& img) {
   sourceImage = cv_bridge::toCvShare(img, "bgr8")->image.clone();
 }
@@ -176,20 +128,15 @@ std::vector<cv::Point2f> ImageProcessing::Generate2DPoints() {
       for (i = wsp_maxB.y - 2; i < wsp_maxB.y + 2; ++i) {
           ptr = image.ptr(i);
           for (j = wsp_maxB.x - 2; j < wsp_maxB.x + 2; ++j) {
-              /*if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
+              if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
                   licznik += (ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
                   suma_i += i*((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]));
                   suma_j += j*(ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
-              }*/
-              if (ptr[3*j+2] > maxG){
-                  maxG = ptr[3*j+2];
-                  wsp_maxB.y = i;
-                  wsp_maxB.x = j;
               }
           }
       }
-      //wsp_maxB.y = (float)(suma_i/licznik);
-      //wsp_maxB.x = (float)(suma_j/licznik);
+      wsp_maxB.y = (float)(suma_i/licznik);
+      wsp_maxB.x = (float)(suma_j/licznik);
   }
 
   licznik = 0.0;
@@ -199,29 +146,6 @@ std::vector<cv::Point2f> ImageProcessing::Generate2DPoints() {
       for (i = wsp_maxG.y - 6; i < wsp_maxG.y + 6; ++i) {
           ptr = image.ptr(i);
           for (j = wsp_maxG.x - 6; j < wsp_maxG.x + 6; ++j) {
-              /*if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
-                  licznik += (ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
-                  suma_i += i*((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]));
-                  suma_j += j*(ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
-              }*/
-              if (ptr[3*j+2] > maxG){
-                  maxG = ptr[3*j+2];
-                  wsp_maxG.y = i;
-                  wsp_maxG.x = j;
-              }
-          }
-      }
-      //wsp_maxG.y = (float)(suma_i/licznik);
-      //wsp_maxG.x = (float)(suma_j/licznik);
-  }
-
-  licznik = 0.0;
-  suma_i = 0.0;
-  suma_j = 0.0;
-  if (wsp_maxW.y - 6 > 0 && wsp_maxW.y + 6 < rows && wsp_maxW.x - 6 > 0 && wsp_maxW.x + 6 < cols){
-      for (i = wsp_maxW.y - 1; i < wsp_maxW.y + 1; ++i) {
-          ptr = image.ptr(i);
-          for (j = wsp_maxW.x - 1; j < wsp_maxW.x + 1; ++j) {
               if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
                   licznik += (ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
                   suma_i += i*((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]));
@@ -229,34 +153,44 @@ std::vector<cv::Point2f> ImageProcessing::Generate2DPoints() {
               }
           }
       }
-      wsp_maxW.y = (int)(suma_i/licznik);
-      wsp_maxW.x = (int)(suma_j/licznik);
+      wsp_maxG.y = (float)(suma_i/licznik);
+      wsp_maxG.x = (float)(suma_j/licznik);
   }
 
   licznik = 0.0;
   suma_i = 0.0;
   suma_j = 0.0;
-  if (wsp_maxR.y - 6 > 0 && wsp_maxR.y + 6 < rows && wsp_maxR.x - 6 > 0 && wsp_maxR.x + 6 < cols){
-      for (i = wsp_maxR.y - 6; i < wsp_maxR.y + 6; ++i) {
+  if (wsp_maxW.y - 6 > 0 && wsp_maxW.y + 6 < rows && wsp_maxW.x - 6 > 0 && wsp_maxW.x + 6 < cols){
+      for (i = wsp_maxW.y - 6; i < wsp_maxW.y + 6; ++i) {
           ptr = image.ptr(i);
-          for (j = wsp_maxR.x - 6; j < wsp_maxR.x + 6; ++j) {
-              /*if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
+          for (j = wsp_maxW.x - 6; j < wsp_maxW.x + 6; ++j) {
+              if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
                   licznik += (ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
                   suma_i += i*((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]));
                   suma_j += j*(ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
-              }*/
-              if (ptr[3*j+2] > maxG){
-                  maxG = ptr[3*j+2];
-                  wsp_maxR.y = i;
-                  wsp_maxR.x = j;
               }
           }
       }
-      //if (wsp_maxR.x != 638 && wsp_maxR.y != 444)
-      //    std::cout<<"aa"<<std::endl;
+      wsp_maxW.y = (float)(suma_i/licznik);
+      wsp_maxW.x = (float)(suma_j/licznik);
+  }
 
-      //wsp_maxR.y = (float)(suma_i/licznik);
-      //wsp_maxR.x = (float)(suma_j/licznik);
+  licznik = 0.0;
+  suma_i = 0.0;
+  suma_j = 0.0;
+  if (wsp_maxR.y - 6 > 10 && wsp_maxR.y + 6 < rows && wsp_maxR.x - 6 > 0 && wsp_maxR.x + 6 < cols){
+      for (i = wsp_maxR.y - 6; i < wsp_maxR.y + 6; ++i) {
+          ptr = image.ptr(i);
+          for (j = wsp_maxR.x - 6; j < wsp_maxR.x + 6; ++j) {
+              if ((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2])> 10){
+                  licznik += (ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
+                  suma_i += i*((ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]));
+                  suma_j += j*(ptr[3*j] + ptr[3*j+1] + ptr[3*j+2]);
+              }
+          }
+      }
+      wsp_maxR.y = (float)(suma_i/licznik);
+      wsp_maxR.x = (float)(suma_j/licznik);
   }
 
   std::vector<cv::Point2f> gridPoints;
@@ -266,14 +200,13 @@ std::vector<cv::Point2f> ImageProcessing::Generate2DPoints() {
   gridPoints.push_back(wsp_maxR);
   gridPoints.push_back(wsp_maxW);
   //std::cout<<"B"<<std::endl;
-  //std::cout<<wsp_maxB<<std::endl;
+  std::cout<<wsp_maxB<<std::endl;
   //std::cout<<"G"<<std::endl;
   //std::cout<<wsp_maxG<<std::endl;
   //std::cout<<"W"<<std::endl;
-  std::cout<<wsp_maxW<<std::endl;
+  //std::cout<<wsp_maxW<<std::endl;
   //std::cout<<"R"<<std::endl;
   //std::cout<<wsp_maxR<<std::endl;
-  //std::cout<<maxG<<std::endl;
   //std::cout<<""<<std::endl;
   return gridPoints;
 }
